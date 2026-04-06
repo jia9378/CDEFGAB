@@ -73,7 +73,7 @@ body {
 .hero-content {
   position: absolute;
   z-index: 3;
-  bottom: 25%;
+  bottom: 28%;
   left: 0;
   right: 0;
   text-align: center;
@@ -135,7 +135,7 @@ body {
 
 .scroll-hint {
   position: absolute;
-  bottom: -15px;
+  bottom: 10px;
   left: 48.5%;
   transform: translateX(-50%);
   z-index: 3;

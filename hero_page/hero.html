@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDEFGAB</title>
+<link rel="stylesheet" href="hero.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="grain"></div>
+
+<section class="hero">
+  <div id="canvas-container"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-top-fade"></div>
+  <div class="hero-bottom-fade"></div>
+
+  <div class="hero-content">
+    <div class="hero-brand">Invisible Piano</div>
+    <div class="hero-title">·C·D·E·F·G·A·B·</div>
+    <div class="hero-sub">sEMG · forearm only · bare hands</div>
+    <!-- <div class="hero-tagline">Practice anywhere.</div> -->
+  </div>
+
+  <button class="view-toggle" id="viewBtn" onclick="toggleView()">Practice Anywhere</button>
+
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+
+  <div class="loader" id="loader">
+    <div class="loader-text">LOADING MODEL</div>
+  </div>
+</section>
+
+<section class="next-section">
+  CONCEPT SECTION
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="hero.js"></script>
+</body>
+</html>

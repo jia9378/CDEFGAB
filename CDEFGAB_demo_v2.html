@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invisible Piano</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Piano case frame -->
+<div class="case-shadow case-shadow-top"></div>
+<div class="case-shadow case-shadow-bottom"></div>
+<div class="case-shadow case-shadow-left"></div>
+<div class="case-shadow case-shadow-right"></div>
+
+<!-- Felt texture layer -->
+<div class="felt-strip felt-strip-top"></div>
+<div class="felt-strip felt-strip-bottom"></div>
+
+<!-- Ambient light from lid -->
+<div class="lid-light"></div>
+
+<!-- Wood grain overlay -->
+<div class="wood-grain"></div>
+<div class="noise-grain"></div>
+
+<div class="brand">CDEFGAB</div>
+
+<div class="env-display">
+  <div class="env-ch">
+    <canvas id="wA" width="72" height="20"></canvas>
+    <label>ch A</label>
+  </div>
+  <div class="env-ch">
+    <canvas id="wB" width="72" height="20"></canvas>
+    <label>ch B</label>
+  </div>
+</div>
+
+<div class="container">
+  <header>
+    <h1>sEMG → Sound</h1>
+  </header>
+
+  <div class="strings-area" id="strings">
+    <!-- Hitch pin rail (left) -->
+    <div class="pin-rail pin-rail-left"></div>
+    <!-- Bridge (right) -->
+    <div class="pin-rail pin-rail-right"></div>
+    <!-- Damper felt strip across strings -->
+    <div class="damper-rail"></div>
+  </div>
+</div>
+
+<div class="event-log" id="log"></div>
+
+<footer>
+  <div class="status">
+    <span class="dot off" id="dot"></span>
+    <span id="stxt">press 1–5 or A S D F G</span>
+  </div>
+  <div class="hint">ws://localhost:8765</div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

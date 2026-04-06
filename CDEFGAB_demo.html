@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invisible Piano</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0C0A08;
+  --copper: #B87333;
+  --copper-light: #D4956A;
+  --copper-dim: #6B4423;
+  --gold: #C9A84C;
+  --gold-dim: #5C4A1E;
+  --string: #8B7355;
+  --string-light: #C4A77D;
+  --cream: #E8DCC8;
+  --text: #A89880;
+  --text-dim: #5A5045;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(139,115,85,0.03) 39px, rgba(139,115,85,0.03) 40px);
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: overlay;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%; height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: fadeDown 1.2s ease-out;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--copper-dim);
+  margin-bottom: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.subtitle {
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.strings-area {
+  position: relative;
+  width: 680px;
+  height: 340px;
+}
+
+/* Each string row */
+.string-group {
+  position: absolute;
+  left: 0; right: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Left pin */
+.pin-left, .pin-right {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--string);
+  border: 1px solid rgba(139,115,85,0.4);
+  flex-shrink: 0;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.string-group.active .pin-left,
+.string-group.active .pin-right {
+  background: var(--copper-light);
+  box-shadow: 0 0 6px var(--glow, var(--copper));
+}
+
+/* The wire */
+.wire-container {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+.wire {
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--string) 0%, var(--string-light) 50%, var(--string) 100%);
+  transform-origin: center;
+}
+
+/* Second wire for thicker strings (lower notes) */
+.wire-2 {
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(50% + 3px);
+  height: 1px;
+  background: linear-gradient(90deg, rgba(139,115,85,0.3) 0%, rgba(196,167,125,0.5) 50%, rgba(139,115,85,0.3) 100%);
+}
+
+/* SVG vibration overlay */
+.vib-svg {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.vib-path {
+  fill: none;
+  stroke: var(--glow, var(--copper));
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 0.05s;
+}
+
+.string-group.active .vib-path {
+  opacity: 0.7;
+  animation: stringVib 0.12s linear infinite;
+}
+
+@keyframes stringVib {
+  0%   { d: path(var(--wave1)); }
+  33%  { d: path(var(--wave2)); }
+  66%  { d: path(var(--wave3)); }
+  100% { d: path(var(--wave1)); }
+}
+
+/* Glow */
+.glow {
+  position: absolute;
+  left: 10%; right: 10%;
+  top: 50%;
+  height: 20px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: var(--glow, var(--copper));
+  filter: blur(14px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.05s;
+}
+
+.string-group.active .glow {
+  animation: glowFlash 0.8s ease-out forwards;
+}
+
+@keyframes glowFlash {
+  0%   { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+/* Labels */
+.note-label {
+  position: absolute;
+  left: -52px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-dim);
+  width: 36px;
+  text-align: right;
+  transition: color 0.1s;
+  user-select: none;
+}
+
+.string-group.active .note-label { color: var(--copper-light); }
+
+.finger-label {
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  opacity: 0.4;
+  transition: opacity 0.1s, color 0.1s;
+  user-select: none;
+}
+
+.string-group.active .finger-label { opacity: 1; color: var(--copper); }
+
+.key-hint {
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  opacity: 0.25;
+  user-select: none;
+}
+
+/* Event log */
+.event-log {
+  position: fixed;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  height: 22px;
+  align-items: center;
+}
+
+.log-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: rgba(184,115,51,0.08);
+  border: 1px solid rgba(184,115,51,0.12);
+  animation: logIn 0.15s ease-out;
+  white-space: nowrap;
+}
+
+@keyframes logIn {
+  from { opacity: 0; transform: translateY(3px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 24px;
+  left: 0; right: 0;
+  text-align: center;
+  z-index: 2;
+  animation: fadeUp 1s ease-out 0.4s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.dot {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.dot.off { background: var(--copper-dim); }
+.dot.on { background: #5A8F5A; box-shadow: 0 0 6px rgba(90,143,90,0.6); }
+
+.hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  opacity: 0.3;
+  margin-top: 6px;
+}
+
+/* Top left brand */
+.brand {
+  position: fixed;
+  top: 24px;
+  left: 28px;
+  z-index: 10;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--copper-dim);
+  letter-spacing: 3px;
+}
+
+/* Mini envelope displays */
+.env-display {
+  position: fixed;
+  top: 24px;
+  right: 28px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.env-ch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.env-ch canvas {
+  border-radius: 2px;
+  opacity: 0.45;
+}
+
+.env-ch label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  opacity: 0.35;
+  letter-spacing: 0.5px;
+}
+</style>
+</head>
+<body>
+
+<div class="brand">CDEFGAB</div>
+
+<div class="env-display">
+  <div class="env-ch"><canvas id="wA" width="72" height="20"></canvas><label>ch A</label></div>
+  <div class="env-ch"><canvas id="wB" width="72" height="20"></canvas><label>ch B</label></div>
+</div>
+
+<div class="container">
+  <header>
+    <h1>sEMG → Sound</h1>
+    <!-- <div class="subtitle">forearm-only finger detection</div> -->
+  </header>
+  <div class="strings-area" id="strings"></div>
+</div>
+
+<div class="event-log" id="log"></div>
+
+<footer>
+  <div class="status">
+    <span class="dot off" id="dot"></span>
+    <span id="stxt">press 1–5 or A S D F G</span>
+  </div>
+  <div class="hint">ws://localhost:8765</div>
+</footer>
+
+<script>
+const FINGERS = [
+  { name:'thumb',  note:'C4', freq:261.63, keys:['1','a'], color:'#B87333', y:20  },
+  { name:'index',  note:'D4', freq:293.66, keys:['2','s'], color:'#C9A84C', y:85  },
+  { name:'middle', note:'E4', freq:329.63, keys:['3','d'], color:'#D4956A', y:150 },
+  { name:'ring',   note:'F4', freq:349.23, keys:['4','f'], color:'#A89880', y:215 },
+  { name:'pinky',  note:'G4', freq:392.00, keys:['5','g'], color:'#8B7355', y:280 },
+];
+
+const area = document.getElementById('strings');
+const logEl = document.getElementById('log');
+let audioCtx = null;
+
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playNote(f, vel) {
+  initAudio();
+  const t = audioCtx.currentTime;
+  const v = Math.max(0.1, Math.min(1, vel));
+
+  const master = audioCtx.createGain();
+  master.gain.setValueAtTime(v * 0.22, t);
+  master.gain.exponentialRampToValueAtTime(v * 0.12, t + 0.06);
+  master.gain.exponentialRampToValueAtTime(v * 0.04, t + 0.6);
+  master.gain.exponentialRampToValueAtTime(0.001, t + 2.8);
+  master.connect(audioCtx.destination);
+
+  [1, 2, 3, 4, 5, 6].forEach((h, i) => {
+    const g = [1, 0.45, 0.25, 0.12, 0.06, 0.03][i];
+    const o = audioCtx.createOscillator();
+    const gn = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.value = f.freq * h;
+    o.detune.value = (Math.random() - 0.5) * 3;
+    gn.gain.setValueAtTime(g * v, t);
+    gn.gain.exponentialRampToValueAtTime(0.001, t + 2.8 - i * 0.2);
+    o.connect(gn); gn.connect(master);
+    o.start(t); o.stop(t + 2.8);
+  });
+
+  // Hammer click
+  const nb = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.015, audioCtx.sampleRate);
+  const nd = nb.getChannelData(0);
+  for (let i = 0; i < nd.length; i++) nd[i] = (Math.random() * 2 - 1) * 0.4;
+  const ns = audioCtx.createBufferSource(); ns.buffer = nb;
+  const ng = audioCtx.createGain();
+  ng.gain.setValueAtTime(v * 0.25, t);
+  ng.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
+  const nf = audioCtx.createBiquadFilter();
+  nf.type = 'highpass'; nf.frequency.value = 2500;
+  ns.connect(nf); nf.connect(ng); ng.connect(master);
+  ns.start(t); ns.stop(t + 0.02);
+}
+
+// Build strings
+FINGERS.forEach((f, i) => {
+  const g = document.createElement('div');
+  g.className = 'string-group';
+  g.id = `s-${f.name}`;
+  g.style.top = f.y + 'px';
+  g.style.setProperty('--glow', f.color);
+
+  // Thicker strings for lower notes
+  const wire2 = i >= 3 ? `<div class="wire-2"></div>` : '';
+
+  g.innerHTML = `
+    <div class="key-hint">${f.keys[0]}</div>
+    <div class="note-label">${f.note}</div>
+    <div class="pin-left"></div>
+    <div class="wire-container">
+      <div class="wire"></div>
+      ${wire2}
+      <canvas class="vib-canvas" width="560" height="50"></canvas>
+      <div class="glow"></div>
+    </div>
+    <div class="pin-right"></div>
+    <div class="finger-label">${f.name}</div>
+  `;
+
+  g.addEventListener('click', () => trigger(f.name, 0.65));
+  area.appendChild(g);
+});
+
+// String vibration via canvas
+function vibrateString(el, color, vel, duration) {
+  const canvas = el.querySelector('.vib-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const mid = h / 2;
+  let amp = vel * 8;
+  const freq = 3 + Math.random() * 2;
+  const start = performance.now();
+  const decay = duration;
+
+  function draw(now) {
+    const elapsed = (now - start) / 1000;
+    if (elapsed > decay) { ctx.clearRect(0, 0, w, h); return; }
+    const a = amp * Math.exp(-elapsed * 3.5);
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.2;
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    for (let x = 0; x < w; x++) {
+      const env = Math.sin(Math.PI * x / w);
+      const y = mid + a * env * Math.sin(freq * Math.PI * x / w + elapsed * 60);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+}
+
+let activeTimers = {};
+
+function trigger(name, vel) {
+  const f = FINGERS.find(x => x.name === name);
+  if (!f) return;
+  const el = document.getElementById(`s-${name}`);
+
+  if (activeTimers[name]) clearTimeout(activeTimers[name]);
+  el.classList.add('active');
+  playNote(f, vel);
+  vibrateString(el, f.color, vel, 1.5);
+
+  // Log
+  const item = document.createElement('div');
+  item.className = 'log-item';
+  item.textContent = `${f.name} → ${f.note}`;
+  item.style.color = f.color;
+  item.style.borderColor = f.color + '20';
+  logEl.appendChild(item);
+  while (logEl.children.length > 8) logEl.removeChild(logEl.firstChild);
+  setTimeout(() => { if (item.parentNode) item.style.opacity = '0.25'; }, 2500);
+
+  activeTimers[name] = setTimeout(() => { el.classList.remove('active'); }, 900);
+}
+
+// Keyboard
+const km = {};
+FINGERS.forEach(f => f.keys.forEach(k => km[k.toLowerCase()] = f.name));
+document.addEventListener('keydown', e => {
+  if (!e.repeat && km[e.key.toLowerCase()]) trigger(km[e.key.toLowerCase()], 0.5 + Math.random() * 0.4);
+});
+
+// Mini waveforms
+const wBufs = { A: [], B: [] };
+function drawWave(id, buf, col) {
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, 72, 20);
+  ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.beginPath();
+  for (let i = 0; i < buf.length; i++) {
+    const y = 10 + buf[i] * 8;
+    i === 0 ? ctx.moveTo(i, y) : ctx.lineTo(i, y);
+  }
+  ctx.stroke();
+}
+function animWave() {
+  ['A','B'].forEach(ch => {
+    wBufs[ch].push((Math.random()-0.5)*0.3);
+    if (wBufs[ch].length > 72) wBufs[ch].shift();
+  });
+  drawWave('wA', wBufs.A, '#6B4423');
+  drawWave('wB', wBufs.B, '#5C4A1E');
+  requestAnimationFrame(animWave);
+}
+animWave();
+
+// WebSocket
+let ws = null, reconn = null;
+function connectWS() {
+  try {
+    ws = new WebSocket('ws://localhost:8765');
+    ws.onopen = () => {
+      document.getElementById('dot').className = 'dot on';
+      document.getElementById('stxt').textContent = 'sEMG connected';
+      if (reconn) { clearInterval(reconn); reconn = null; }
+    };
+    ws.onmessage = e => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.finger) trigger(d.finger, d.velocity || 0.6);
+        if (d.wave_a) { wBufs.A = d.wave_a.slice(-72); drawWave('wA', wBufs.A, '#B87333'); }
+        if (d.wave_b) { wBufs.B = d.wave_b.slice(-72); drawWave('wB', wBufs.B, '#C9A84C'); }
+      } catch(err){}
+    };
+    ws.onclose = () => {
+      document.getElementById('dot').className = 'dot off';
+      document.getElementById('stxt').textContent = 'press 1\u20135 or A S D F G';
+      if (!reconn) reconn = setInterval(connectWS, 3000);
+    };
+    ws.onerror = () => ws.close();
+  } catch(e) { if (!reconn) reconn = setInterval(connectWS, 3000); }
+}
+connectWS();
+</script>
+</body>
+</html>

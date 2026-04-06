@@ -1,0 +1,258 @@
+/* ==========================================================================
+   CDEFGAB — Hero Scene Styles
+   ========================================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #080604;
+  color: #E8DCC8;
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+}
+
+
+/* ---- Hero section ---- */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#canvas-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
+/* ---- Overlays ---- */
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 75% 65% at 50% 45%,
+    transparent 20%,
+    rgba(8, 6, 4, 0.7) 70%,
+    rgba(8, 6, 4, 0.95) 100%
+  );
+}
+
+.hero-top-fade {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 180px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(8,6,4,0.6), transparent);
+}
+
+.hero-bottom-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 50px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to top, #080604de, transparent);
+}
+
+
+/* ---- Title content ---- */
+
+.hero-content {
+  position: absolute;
+  z-index: 3;
+  bottom: 15%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+}
+
+.hero-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: clamp(11px, 1.5vw, 14px);
+  letter-spacing: 10px;
+  color: #6B4423;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 1.25s ease-out 0.3s forwards;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(36px, 6vw, 72px);
+  letter-spacing: 12px;
+  text-transform: uppercase;
+  color: #D4956A;
+  opacity: 0;
+  margin-bottom: 40px;
+  animation: fadeUp 1.25s ease-out 0.5s forwards;
+}
+
+.hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(10px, 1.2vw, 13px);
+  letter-spacing: 4px;
+  color: #6B4423;
+  margin-top: 20px;
+  opacity: 0;
+  animation: fadeUp 1.25s ease-out 1s forwards;
+}
+
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(14px, 2vw, 20px);
+  color: #8B7355;
+  margin-top: 36px;
+  opacity: 0;
+  animation: fadeUp 1.25s ease-out 1.4s forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ---- Scroll indicator ---- */
+
+.scroll-hint {
+  position: absolute;
+  bottom: -15px;
+  left: 48.5%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  margin-top: 40px;
+  animation: fadeUp 1s ease-out 2s forwards;
+}
+
+.scroll-hint span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: #5a504586;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 24px;
+  background: #5A504586;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.3; }
+  50%      { transform: scaleY(1); opacity: 0.7; }
+}
+
+
+/* ---- Loader ---- */
+
+.loader {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #080604;
+  transition: opacity 0.8s ease-out;
+}
+
+.loader.done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #6B4423;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.8; }
+}
+
+
+/* ---- Grain ---- */
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+
+/* ---- Next section placeholder ---- */
+
+.next-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5A5045;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+}
+
+/* ---- View toggle button ---- */
+
+.view-toggle {
+  position: absolute;
+  /* top: 80px; */
+  bottom: 28px;
+  left: 44%;
+  transform: translateX(-50%);
+  z-index: 4;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #6B4423;
+  background: rgba(184, 115, 51, 0.06);
+  border: 1px solid rgba(184, 115, 51, 0.15);
+  padding: 8px 24px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 0;
+  animation: fadeUp 1s ease-out 1.8s forwards;
+  margin-top: 100px;
+  margin-bottom: 40px;
+}
+
+.view-toggle:hover {
+  background: rgba(184, 115, 51, 0.12);
+  border-color: rgba(184, 115, 51, 0.3);
+  color: #D4956A;
+}

@@ -1,0 +1,625 @@
+/* ==========================================================================
+   Invisible Piano — Piano Case Interior Aesthetic
+   
+   Visual concept: looking down into an open grand piano case.
+   Dark lacquered rosewood walls, burgundy felt damper strip,
+   brass hitch pins, warm amber light spilling from the raised lid.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&display=swap');
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Lacquered rosewood */
+  --case-dark:    #0A0705;
+  --case-wood:    #1A120C;
+  --case-grain:   #231810;
+
+  /* Brass hardware */
+  --brass:        #C4A24E;
+  --brass-dim:    #8B7430;
+  --brass-bright: #DDB856;
+
+  /* Copper wound strings */
+  --copper:       #B87333;
+  --copper-light: #D4956A;
+  --copper-dim:   #6B4423;
+
+  /* Felt & dampers */
+  --felt:         #6B1A1A;
+  --felt-deep:    #4A1212;
+  --felt-light:   #8B2E2E;
+
+  /* Strings */
+  --string:       #9B8B70;
+  --string-light: #C4A77D;
+  --string-dim:   #5A4D3A;
+
+  /* Text */
+  --text:         #A89880;
+  --text-dim:     #5A5045;
+  --cream:        #E8DCC8;
+}
+
+
+/* ==== BASE ==== */
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: var(--case-dark);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+
+/* ==== PIANO CASE FRAME ====
+   Dark vignette edges that simulate the inside walls of the case.
+   Four overlapping gradients create the sense of depth/enclosure. */
+
+.case-shadow {
+  position: fixed;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.case-shadow-top {
+  top: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(
+    to bottom,
+    #050302 0%,
+    rgba(26, 18, 12, 0.95) 20%,
+    rgba(26, 18, 12, 0.6) 50%,
+    transparent 100%
+  );
+}
+
+.case-shadow-bottom {
+  bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(
+    to top,
+    #050302 0%,
+    rgba(26, 18, 12, 0.95) 20%,
+    rgba(26, 18, 12, 0.6) 50%,
+    transparent 100%
+  );
+}
+
+.case-shadow-left {
+  top: 0; bottom: 0; left: 0;
+  width: 100px;
+  background: linear-gradient(
+    to right,
+    #050302 0%,
+    rgba(26, 18, 12, 0.9) 30%,
+    transparent 100%
+  );
+}
+
+.case-shadow-right {
+  top: 0; bottom: 0; right: 0;
+  width: 100px;
+  background: linear-gradient(
+    to left,
+    #050302 0%,
+    rgba(26, 18, 12, 0.9) 30%,
+    transparent 100%
+  );
+}
+
+
+/* ==== FELT STRIPS ====
+   Burgundy felt damper rails — the signature visual of a piano interior */
+
+.felt-strip {
+  position: fixed;
+  left: 12%;
+  right: 12%;
+  height: 4px;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: 1px;
+}
+
+.felt-strip-top {
+  top: 15%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--felt-deep) 10%,
+    var(--felt) 30%,
+    var(--felt-light) 50%,
+    var(--felt) 70%,
+    var(--felt-deep) 90%,
+    transparent 100%
+  );
+  opacity: 0.35;
+  box-shadow:
+    0 0 8px rgba(107, 26, 26, 0.3),
+    0 1px 0 rgba(0,0,0,0.4);
+}
+
+.felt-strip-bottom {
+  bottom: 15%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--felt-deep) 10%,
+    var(--felt) 30%,
+    var(--felt-light) 50%,
+    var(--felt) 70%,
+    var(--felt-deep) 90%,
+    transparent 100%
+  );
+  opacity: 0.25;
+  box-shadow:
+    0 0 8px rgba(107, 26, 26, 0.2),
+    0 -1px 0 rgba(0,0,0,0.3);
+}
+
+
+/* ==== LID LIGHT ====
+   Warm elliptical glow from the piano lid — gives the sense
+   of ambient light pouring into the case from above-left */
+
+.lid-light {
+  position: fixed;
+  top: -20%;
+  left: 15%;
+  width: 70%;
+  height: 80%;
+  background: radial-gradient(
+    ellipse 60% 50% at 40% 30%,
+    rgba(212, 168, 100, 0.04) 0%,
+    rgba(184, 115, 51, 0.02) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/* ==== WOOD GRAIN ====
+   Subtle horizontal grain pattern suggesting the soundboard surface */
+
+.wood-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(
+      2deg,
+      transparent,
+      transparent 18px,
+      rgba(139, 115, 85, 0.012) 18px,
+      rgba(139, 115, 85, 0.012) 19px
+    ),
+    repeating-linear-gradient(
+      178deg,
+      transparent,
+      transparent 43px,
+      rgba(100, 75, 50, 0.008) 43px,
+      rgba(100, 75, 50, 0.008) 44px
+    );
+}
+
+/* Film grain for analog warmth */
+.noise-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: overlay;
+  opacity: 0.1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+
+/* ==== LAYOUT ==== */
+
+.container {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: fadeDown 1.2s ease-out;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--copper-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+
+/* ==== STRINGS AREA ==== */
+
+.strings-area {
+  position: relative;
+  width: 680px;
+  height: 340px;
+}
+
+/* Pin rails — brass bars at each end of the strings */
+.pin-rail {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  z-index: 6;
+  border-radius: 1px;
+}
+
+.pin-rail-left {
+  left: -2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--brass-dim) 15%,
+    var(--brass) 50%,
+    var(--brass-dim) 85%,
+    transparent
+  );
+  opacity: 0.3;
+  box-shadow: 1px 0 4px rgba(196, 162, 78, 0.1);
+}
+
+.pin-rail-right {
+  right: -2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--brass-dim) 15%,
+    var(--brass) 50%,
+    var(--brass-dim) 85%,
+    transparent
+  );
+  opacity: 0.3;
+  box-shadow: -1px 0 4px rgba(196, 162, 78, 0.1);
+}
+
+/* Damper rail crossing the strings */
+.damper-rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 35%;
+  width: 6px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--felt-deep) 10%,
+    var(--felt) 50%,
+    var(--felt-deep) 90%,
+    transparent
+  );
+  opacity: 0.15;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: 1px;
+}
+
+
+/* ==== STRING ROWS ==== */
+
+.string-group {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.string-group:hover .finger-label { opacity: 0.7; }
+.string-group:hover .wire { opacity: 0.5; }
+.string-group:hover .pin-left,
+.string-group:hover .pin-right { background: var(--brass); }
+
+/* Hitch pins */
+.pin-left, .pin-right {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brass-dim);
+  border: 1px solid rgba(196, 162, 78, 0.25);
+  flex-shrink: 0;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.string-group.active .pin-left,
+.string-group.active .pin-right {
+  background: var(--brass-bright);
+  box-shadow: 0 0 6px var(--glow, var(--copper));
+}
+
+/* Wire container */
+.wire-container {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+/* Static wire line */
+.wire {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  opacity: 0.35;
+  transition: opacity 0.15s;
+  background: linear-gradient(
+    90deg,
+    var(--string-dim) 0%,
+    var(--string) 15%,
+    var(--string-light) 50%,
+    var(--string) 85%,
+    var(--string-dim) 100%
+  );
+}
+
+/* Second wire for bass strings (wound copper) */
+.wire-2 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% + 3px);
+  height: 1px;
+  opacity: 0.2;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--copper-dim) 15%,
+    var(--copper) 50%,
+    var(--copper-dim) 85%,
+    transparent 100%
+  );
+}
+
+/* Vibration canvas */
+.vib-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Glow flash under string on strike */
+.glow {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 50%;
+  height: 20px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: var(--glow, var(--copper));
+  filter: blur(14px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.05s;
+}
+
+.string-group.active .glow {
+  animation: glowFlash 0.9s ease-out forwards;
+}
+
+@keyframes glowFlash {
+  0%   { opacity: 0.45; }
+  100% { opacity: 0; }
+}
+
+
+/* ==== LABELS ==== */
+
+.note-label {
+  position: absolute;
+  left: -52px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-dim);
+  width: 36px;
+  text-align: right;
+  transition: color 0.15s;
+  user-select: none;
+}
+
+.string-group.active .note-label {
+  color: var(--copper-light);
+}
+
+.finger-label {
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  opacity: 0.35;
+  transition: opacity 0.15s, color 0.15s;
+  user-select: none;
+}
+
+.string-group.active .finger-label {
+  opacity: 1;
+  color: var(--copper);
+}
+
+.key-hint {
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  opacity: 0.2;
+  user-select: none;
+}
+
+
+/* ==== EVENT LOG ==== */
+
+.event-log {
+  position: fixed;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  height: 22px;
+  align-items: center;
+  z-index: 10;
+}
+
+.log-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: rgba(184, 115, 51, 0.06);
+  border: 1px solid rgba(184, 115, 51, 0.1);
+  animation: logIn 0.15s ease-out;
+  white-space: nowrap;
+}
+
+@keyframes logIn {
+  from { opacity: 0; transform: translateY(3px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* ==== FOOTER ==== */
+
+footer {
+  position: fixed;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 10;
+  animation: fadeUp 1s ease-out 0.4s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.dot.off { background: var(--copper-dim); }
+.dot.on  {
+  background: #5A8F5A;
+  box-shadow: 0 0 6px rgba(90, 143, 90, 0.6);
+}
+
+.hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  opacity: 0.25;
+  margin-top: 6px;
+}
+
+
+/* ==== BRAND ==== */
+
+.brand {
+  position: fixed;
+  top: 24px;
+  left: 28px;
+  z-index: 10;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--copper-dim);
+  letter-spacing: 3px;
+}
+
+
+/* ==== MINI ENVELOPE WAVEFORMS ==== */
+
+.env-display {
+  position: fixed;
+  top: 24px;
+  right: 28px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.env-ch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.env-ch canvas {
+  border-radius: 2px;
+  opacity: 0.4;
+}
+
+.env-ch label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  opacity: 0.3;
+  letter-spacing: 0.5px;
+}

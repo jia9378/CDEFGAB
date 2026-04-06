@@ -73,7 +73,7 @@ body {
 .hero-content {
   position: absolute;
   z-index: 3;
-  bottom: 15%;
+  bottom: 25%;
   left: 0;
   right: 0;
   text-align: center;
@@ -99,7 +99,7 @@ body {
   text-transform: uppercase;
   color: #D4956A;
   opacity: 0;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   animation: fadeUp 1.25s ease-out 0.5s forwards;
 }
 
@@ -231,7 +231,7 @@ body {
 .view-toggle {
   position: absolute;
   /* top: 80px; */
-  bottom: 28px;
+  bottom: 80px;
   left: 44%;
   transform: translateX(-50%);
   z-index: 4;
